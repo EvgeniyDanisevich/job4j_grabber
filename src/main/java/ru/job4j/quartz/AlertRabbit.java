@@ -4,7 +4,8 @@ import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import static org.quartz.JobBuilder.*;
 import static org.quartz.TriggerBuilder.*;
@@ -13,8 +14,12 @@ import static org.quartz.SimpleScheduleBuilder.*;
 public class AlertRabbit {
     public static void main(String[] args) {
         int interval = 0;
-        try (BufferedReader reader = new BufferedReader(
-                new FileReader("src/main/resources/rabbit.properties"))) {
+        try (InputStream is = AlertRabbit.class
+                .getClassLoader().getResourceAsStream("rabbit.properties")) {
+            if (is == null) {
+                throw new IllegalArgumentException("File not found");
+            }
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
             String[] strings = reader.readLine().split("=");
             interval = Integer.parseInt(strings[1]);
         } catch (Exception e) {
