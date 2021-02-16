@@ -1,4 +1,7 @@
 language: java
+install: true
+script:
+  - mvn install
 
 jdk:
   - openjdk14
@@ -17,6 +20,6 @@ after_success:
 notifications:
   email:
     recipients:
-      -rail.shamsemukhametov@mail.ru
+      -a937va@gmail.com
     on_success: never # default: change
     on_failure: always # default: always
