@@ -3,5 +3,5 @@ create table posts (
                        name varchar(255),
                        text text,
                        link text UNIQUE,
-                       created date
+                       created timestamp
 );
