@@ -1,7 +1,4 @@
 language: java
-install: true
-script:
-  - mvn install
 
 jdk:
   - openjdk14
