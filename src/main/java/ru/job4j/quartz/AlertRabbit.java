@@ -4,12 +4,7 @@ import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
 
 import java.io.InputStream;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.*;
 import java.util.Properties;
 
 import static org.quartz.JobBuilder.*;
@@ -17,18 +12,26 @@ import static org.quartz.TriggerBuilder.*;
 import static org.quartz.SimpleScheduleBuilder.*;
 
 public class AlertRabbit {
+    public static Connection createConnection(Properties properties)
+            throws ClassNotFoundException, SQLException {
+        Connection connection;
+        Class.forName(properties.getProperty("jdbc.driver"));
+        String url = properties.getProperty("jdbc.url");
+        String login = properties.getProperty("jdbc.username");
+        String password = properties.getProperty("jdbc.password");
+        connection = DriverManager.getConnection(url, login, password);
+        return connection;
+    }
+
     public static void main(String[] args) {
-        try (InputStream is = AlertRabbit.class
-                .getClassLoader().getResourceAsStream("rabbit.properties")) {
-            Properties properties = new Properties();
+        Properties properties = new Properties();
+        try (InputStream is = AlertRabbit.class.getClassLoader()
+                .getResourceAsStream("rabbit.properties")) {
             properties.load(is);
-            List<Long> store = new ArrayList<>();
-            Connection connection;
-            Class.forName(properties.getProperty("jdbc.driver"));
-            String url = properties.getProperty("jdbc.url");
-            String login = properties.getProperty("jdbc.username");
-            String password = properties.getProperty("jdbc.password");
-            connection = DriverManager.getConnection(url, login, password);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try (Connection connection = createConnection(properties)) {
             JobDataMap data = new JobDataMap();
             data.put("connection", connection);
             Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
@@ -47,7 +50,6 @@ public class AlertRabbit {
             scheduler.scheduleJob(job, trigger);
             Thread.sleep(10000);
             scheduler.shutdown();
-            System.out.println(store);
         } catch (Exception e) {
             e.printStackTrace();
         }
