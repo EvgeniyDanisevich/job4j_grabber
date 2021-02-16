@@ -4,11 +4,15 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import ru.job4j.grabber.Parse;
 
 import java.io.IOException;
+import java.net.URL;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
-public class SqlRuParse {
+public class SqlRuParse implements Parse {
     public static void main(String[] args) throws Exception {
         for (int i = 1; i < 6; i++) {
             Document doc = Jsoup.connect("https://www.sql.ru/forum/job-offers/" + i).get();
@@ -33,5 +37,37 @@ public class SqlRuParse {
     public static LocalDateTime date(String url) throws IOException {
         Document doc = Jsoup.connect(url).get();
         return Parsing.dateParser(doc.select(".msgFooter").get(0).text().split(" \\[")[0]);
+    }
+
+    @Override
+    public List<Post> list(String link) {
+        List<Post> posts = new ArrayList<>();
+        try {
+            Document doc = Jsoup.connect(link).get();
+            Elements row = doc.select(".postslisttopic");
+            for (Element el : row) {
+                Element innerElement = el.child(0);
+                URL url = new URL(innerElement.attr("href"));
+                posts.add(detail(url.toString()));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return posts;
+    }
+
+    @Override
+    public Post detail(String link) {
+        Post post = new Post();
+        try {
+            Document doc = Jsoup.connect(link).get();
+            post.setTitle(doc.select(".messageHeader").get(0).text().split(" \\[")[0]);
+            post.setUrl(new URL(link));
+            post.setText(details(link));
+            post.setLocalDateTime(date(link));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return post;
     }
 }

@@ -10,6 +10,9 @@ public class Post {
     private String text;
     private LocalDateTime localDateTime;
 
+    public Post() {
+    }
+
     public Post(String title, URL url, String text, LocalDateTime localDateTime) {
         this.title = title;
         this.url = url;
