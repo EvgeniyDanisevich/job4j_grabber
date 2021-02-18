@@ -53,14 +53,14 @@ public class PsqlStore implements Store, AutoCloseable {
         )) {
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
-                    posts.add(
-                            new Post(
-                                    resultSet.getString("name"),
-                                    new URL(resultSet.getString("link")),
-                                    resultSet.getString("text"),
-                                    resultSet.getTimestamp("created").toLocalDateTime()
-                            )
+                    Post post = new Post(
+                            resultSet.getString("name"),
+                            new URL(resultSet.getString("link")),
+                            resultSet.getString("text"),
+                            resultSet.getTimestamp("created").toLocalDateTime()
                     );
+                    post.setId(resultSet.getInt(1));
+                    posts.add(post);
                 }
             } catch (SQLException | MalformedURLException e) {
                 e.printStackTrace();
@@ -73,8 +73,7 @@ public class PsqlStore implements Store, AutoCloseable {
 
     @Override
     public Post findById(String id) {
-        Post post = new Post();
-        try (PreparedStatement statement = cnn.prepareStatement(
+/*      try (PreparedStatement statement = cnn.prepareStatement(
                 "select * from posts where id = ?"
         )) {
             statement.setInt(1, Integer.parseInt(id));
@@ -89,6 +88,14 @@ public class PsqlStore implements Store, AutoCloseable {
             }
         } catch (SQLException | MalformedURLException e) {
             e.printStackTrace();
+        }*/
+        Post post = new Post();
+        List<Post> posts = getAll();
+        for (Post p : posts) {
+            if (p.getId() == Integer.parseInt(id)) {
+                post = p;
+                break;
+            }
         }
         return post;
     }

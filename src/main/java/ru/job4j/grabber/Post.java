@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Post {
+    private int id;
     private String title;
     private URL url;
     private String text;
@@ -18,6 +19,14 @@ public class Post {
         this.url = url;
         this.text = text;
         this.localDateTime = localDateTime;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getTitle() {
@@ -75,7 +84,8 @@ public class Post {
     @Override
     public String toString() {
         return "Post{"
-                + "title='" + title + '\''
+                + "id=" + id
+                + ", title='" + title + '\''
                 + ", url=" + url
                 + ", text='" + text + '\''
                 + ", localDateTime=" + localDateTime
