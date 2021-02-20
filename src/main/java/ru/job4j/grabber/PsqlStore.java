@@ -73,13 +73,15 @@ public class PsqlStore implements Store, AutoCloseable {
 
     @Override
     public Post findById(String id) {
-/*      try (PreparedStatement statement = cnn.prepareStatement(
+        Post post = new Post();
+        try (PreparedStatement statement = cnn.prepareStatement(
                 "select * from posts where id = ?"
         )) {
             statement.setInt(1, Integer.parseInt(id));
             statement.execute();
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
+                    post.setId(resultSet.getInt(1));
                     post.setTitle(resultSet.getString("name"));
                     post.setUrl(new URL(resultSet.getString("link")));
                     post.setText(resultSet.getString("text"));
@@ -88,14 +90,6 @@ public class PsqlStore implements Store, AutoCloseable {
             }
         } catch (SQLException | MalformedURLException e) {
             e.printStackTrace();
-        }*/
-        Post post = new Post();
-        List<Post> posts = getAll();
-        for (Post p : posts) {
-            if (p.getId() == Integer.parseInt(id)) {
-                post = p;
-                break;
-            }
         }
         return post;
     }
