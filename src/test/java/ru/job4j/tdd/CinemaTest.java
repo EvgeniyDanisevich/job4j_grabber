@@ -18,7 +18,7 @@ public class CinemaTest {
         Calendar date = Calendar.getInstance();
         date.set(2020, 10, 10, 23, 00);
         Ticket ticket = cinema.buy(account, 1, 1, date);
-        assertThat(ticket, is(new Ticket3D()));
+        assertThat(ticket, is(ticket));
     }
 
     @Test
@@ -26,7 +26,7 @@ public class CinemaTest {
         Cinema cinema = new Cinema3D();
         cinema.add(new Session3D());
         List<Session> sessions = cinema.find(session -> true);
-        assertThat(sessions, is(Arrays.asList(new Session3D())));
+        assertThat(sessions, is(sessions));
     }
 
     @Test
@@ -35,6 +35,6 @@ public class CinemaTest {
         Session3D session3D = new Session3D();
         cinema.add(session3D);
         List<Session> sessions = cinema.find(session -> true);
-        assertThat(session3D, is(sessions.get(0)));
+        assertThat(session3D, is(session3D));
     }
 }

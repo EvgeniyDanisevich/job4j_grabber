@@ -1,3 +1,5 @@
 *.iml
 target
 .idea
+src/test/java/ru/job4j/kiss
+src/test/java/ru/job4j/tdd
